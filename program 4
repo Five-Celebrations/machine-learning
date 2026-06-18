@@ -1,0 +1,57 @@
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score, f1_score
+
+# Load dataset
+X, y = load_iris(return_X_y=True)
+
+# Split data
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.3, random_state=42
+)
+
+# Test different k values
+for weights in ["uniform", "distance"]:
+    print(f"\n{weights.capitalize()} k-NN")
+
+    for k in [1, 3, 5]:
+        model = KNeighborsClassifier(n_neighbors=k, weights=weights)
+        model.fit(X_train, y_train)
+
+        y_pred = model.predict(X_test)
+
+        print(
+            f"k={k} | Accuracy={accuracy_score(y_test, y_pred):.2f} | "
+            f"F1={f1_score(y_test, y_pred, average='weighted'):.2f}"
+        )
+
+----------------------------------------------------------------------------------------
+
+from sklearn.datasets import load_wine
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score, f1_score
+
+# Load dataset
+X, y = load_wine(return_X_y=True)
+
+# Split data
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.3, random_state=42
+)
+
+# Test Regular and Weighted k-NN
+for weights in ["uniform", "distance"]:
+    print(f"\n{weights.capitalize()} k-NN")
+
+    for k in [1, 3, 5]:
+        model = KNeighborsClassifier(n_neighbors=k, weights=weights)
+        model.fit(X_train, y_train)
+
+        y_pred = model.predict(X_test)
+
+        print(
+            f"k={k} | Accuracy={accuracy_score(y_test, y_pred):.4f} | "
+            f"F1={f1_score(y_test, y_pred, average='weighted'):.4f}"
+        )
