@@ -1,0 +1,49 @@
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier, plot_tree
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+
+# Load dataset
+data = sns.load_dataset("titanic")
+
+# Select features and remove missing values
+data = data[['pclass','sex','age','sibsp','parch','fare','embarked','survived']].dropna()
+
+# Convert text to numbers
+data['sex'] = data['sex'].map({'male':0, 'female':1})
+data['embarked'] = data['embarked'].map({'C':0, 'Q':1, 'S':2})
+
+# Features and target
+X = data.drop('survived', axis=1)
+y = data['survived']
+
+# Split data
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# Train model
+model = DecisionTreeClassifier(max_depth=4, random_state=42)
+model.fit(X_train, y_train)
+
+# Predict
+y_pred = model.predict(X_test)
+
+# Metrics
+print("Accuracy :", round(accuracy_score(y_test, y_pred), 2))
+print("Precision:", round(precision_score(y_test, y_pred), 2))
+print("Recall   :", round(recall_score(y_test, y_pred), 2))
+print("F1 Score :", round(f1_score(y_test, y_pred), 2))
+
+# Graph 1: Decision Tree
+plt.figure(figsize=(12,6))
+plot_tree(model, feature_names=X.columns,
+          class_names=['Not Survived','Survived'],
+          filled=True)
+plt.show()
+
+# Graph 2: Survival Count
+sns.countplot(x='survived', data=data)
+plt.title("Survival Distribution")
+plt.show()
